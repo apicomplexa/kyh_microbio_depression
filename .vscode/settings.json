@@ -1,0 +1,8 @@
+{
+    "python-envs.workspaceSearchPaths": [
+        ".venv",
+        "*/.venv",
+        ".pixi/envs"
+    ],
+    "python.defaultInterpreterPath": "/mnt/d/Projects/03_Science_and_Education/kyh_microbio_depression/.pixi/envs/default/bin/python"
+}

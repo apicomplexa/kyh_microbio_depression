@@ -1,0 +1,16 @@
+# pixi environments
+.pixi/*
+!.pixi/config.toml
+
+# snakemake
+.snakemake
+
+# Data
+data/raw
+data/temp
+
+# reports and results
+results
+
+# logs
+log

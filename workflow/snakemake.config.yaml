@@ -1,0 +1,8 @@
+pathvars:
+  data_initial: 'data/initial'
+  data_raw: 'data/raw'
+  samples: 'data/raw/fastq'
+  samples_filter: 'data/raw/fastq/filtered'
+  temp: 'data/temp'
+  reports: 'results/reports'
+  figures: 'results/figures'
