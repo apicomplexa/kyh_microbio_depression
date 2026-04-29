@@ -1,0 +1,58 @@
+include: "../../scripts/sra_run_id.smk"
+
+SRA_RUNS = extract_sra_run_table()
+
+rule LoadFastqBySRR:
+    output:
+        fq=expand('<samples>/raw/{{sra_run}}_{n}.fastq', n=[1,2])
+    params:
+        outDir=lambda wc, output: subpath(output.fq[0], parent=True)
+    conda:
+        "conda.env.yaml"
+    shell:
+        'fasterq-dump {wildcards.sra_run} -O {params.outDir}'
+
+rule CutAdapters:
+    input:
+        fastq=rules.LoadFastqBySRR.output
+    output:
+        fastq=expand('<samples>/trimmed/{{sra_run}}_{n}.fastq', n=[1,2]),
+        report=temp('<temp>/for_multiqc/cutadapt/report_{sra_run}.json')
+    conda:
+        "conda.env.yaml"
+    log:
+        "log/cutadapt/{sra_run}.log"
+    shell:
+        "cutadapt "
+        "-g CCTACGGGNGGCWGCAG "
+        "-G GACTACHVGGGTATCTAATCC "
+        "-m 215 -M 285 --discard-untrimmed "
+        "-o {output.fastq[0]} -p {output.fastq[1]} "
+        "{input} --json={output.report} > {log} 2>&1"
+
+rule Fastqc:
+    input:
+        reads=rules.CutAdapters.output.fastq
+    output:
+        temp(directory('<temp>/for_multiqc/fqc/{sra_run}'))
+    conda:
+        "conda.env.yaml"
+    log:
+        "log/fqc/{sra_run}.log"
+    shell:
+        "mkdir -p {output} && "
+        "fastqc -o {output} {input.reads} >> {log} 2>&1"
+
+rule Multiqc:
+    input:
+        fastqc_dir=expand('<temp>/for_multiqc/fqc/{sra_run}', sra_run=SRA_RUNS ),
+        cutadapt_report=expand('<temp>/for_multiqc/cutadapt/report_{sra_run}.json', sra_run=SRA_RUNS),
+        mqcDir='<temp>/for_multiqc'
+    output:
+        report='<reports>/multiqc/multiqc_report.html',
+        reportDir=directory('<reports>/multiqc')
+    conda:
+        "conda.env.yaml"
+    params:
+    shell:
+        'multiqc -o {output.reportDir} {input.mqcDir}'

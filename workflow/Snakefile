@@ -1,0 +1,11 @@
+configfile: "workflow/snakemake.config.yaml"
+
+include: "steps/01_load_and_trim/Snakefile"
+include: "steps/02_taxa_with_dada2/Snakefile"
+
+rule all:
+    input:
+        mqc_report='<reports>/multiqc/multiqc_report.html',
+        filtered_reads=expand("<samples>/filtered/{sample}_{n}.fastq", sample=SRA_RUNS, n=[1, 2])
+        
+
