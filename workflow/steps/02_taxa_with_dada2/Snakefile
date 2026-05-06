@@ -1,0 +1,20 @@
+include: "../../scripts/sra_run_id.smk"
+
+SRA_RUNS = extract_sra_run_table()
+
+rule FilterAndTrim:
+    input:
+        expand("<samples>/trimmed/{sample}_{n}.fastq", sample=SRA_RUNS, n=[1, 2])
+    output:
+        expand("<samples_filter>/{sample}_{n}.fastq", sample=SRA_RUNS, n=[1, 2])
+    notebook:
+        "notebooks/filterAndTrim.r.ipynb"
+
+rule Dada2:
+    input: rules.FilterAndTrim.output
+    output:
+        tax='<results>/ASVs_tax.tsv',
+        counts='<results>/ASVs_counts.tsv',
+        fasta='<results>/ASVs.fa'
+    notebook:
+        "notebooks/dada2.r.ipynb"
