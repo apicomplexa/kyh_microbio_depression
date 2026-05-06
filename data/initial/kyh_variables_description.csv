@@ -1,0 +1,56 @@
+,Label
+hcd_date,Date of Health Check
+d_sex,Derived sex
+d_age_hc,Derived age at heallth check
+d_age_hc_grp_10yr,Derived age at health check 10yr grp
+d_age_hc_grp_5yr,Derived age at health check 5yr grp
+b_a9,Education level
+bd_education3_vs,Education 3 categories
+bd_phq9_sev_score,PHQ-9 Depression severity score
+bd_phq9_dep_alt,PHQ-9 depression alternative scoring
+bd_phq9_symptomcount,PHQ-9 symptom count
+bd_phq9_dep_cat,PHQ-9 depression categority
+bd_phq9_any_dep,PHQ-9 any depression (severity score≥5)
+bd_phq9_mod_dep,PHQ-9 moderate depression (severity score≥10)
+b_e1,Depression. 1. Little interest in doing things
+b_e2,Depression. 2. Feeling down
+b_e3,Depression. 3. Troubled sleep
+b_e4,Depression. 4. Feeling tired
+b_e5,Depression. 5. Poor appetite or overeating
+b_e6,Depression. 6. Feeling bad about yourself
+b_e7,Depression. 7. Trouble concentrating on things
+b_e8,Depression. 8. Moving or speaking  slowly or the opposite- being restless
+b_e9,Depression. 9. Thoughts that you would be better off dead
+b_e10,Depression. 10. Degree of difficulty of the mentioned problems
+lab_lc_w8,Arrival faecal sample timestamp
+lab_lc_w8b,Date faecal sample was collected by participant ( from label on faecal sample po
+lab_lc_w8a,Time faecal sample was collected by participant ( from label on faecal sample po
+hc_c1,Uses any medications
+hcd_c2g_g4,ATC coding of medication comment 4
+hcd_c2g5,ATC code medication 5
+hcd_c2g_f5,ATC coding of medication  flag 5
+hcd_c2g_g5,ATC coding of medication comment 5
+hcd_c2g6,ATC code medication 6
+hcd_c2g_f6,ATC coding of medication  flag 6
+hcd_c2g_g6,ATC coding of medication comment 6
+hcd_c2g7,ATC code medication 7
+hcd_c2g_f7,ATC coding of medication  flag 7
+hcd_c2g_g7,ATC coding of medication comment 7
+hcd_c2g1,ATC code medication 1
+hcd_c2g_f1,ATC coding of medication  flag 1
+hcd_c2g_g1,ATC coding of medication comment 1
+hcd_c2g2,ATC code medication 2
+hcd_c2g_f2,ATC coding of medication  flag 2
+hcd_c2g_g2,ATC coding of medication comment 2
+hcd_c2g3,ATC code medication 3
+hcd_c2g_f3,ATC coding of medication  flag 3
+hcd_c2g_g3,ATC coding of medication comment 3
+hcd_c2g4,ATC code medication 4
+hcd_c2g_f4,ATC coding of medication  flag 4
+atc1,ATC group coding of medication 1
+atc2,ATC group coding of medication 2
+atc3,ATC group coding of medication 3
+atc4,ATC group coding of medication 4
+atc5,ATC group coding of medication 5
+atc6,ATC group coding of medication 6
+atc7,ATC group coding of medication 7

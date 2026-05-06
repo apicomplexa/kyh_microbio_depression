@@ -4,5 +4,8 @@
         "*/.venv",
         ".pixi/envs"
     ],
-    "python.defaultInterpreterPath": "/mnt/d/Projects/03_Science_and_Education/kyh_microbio_depression/.pixi/envs/default/bin/python"
+    "python.defaultInterpreterPath": "/mnt/d/Projects/03_Science_and_Education/kyh_microbio_depression/.pixi/envs/default/bin/python",
+    "python-envs.defaultEnvManager": "renan-r-santos.pixi-code:pixi",
+    "python-envs.defaultPackageManager": "renan-r-santos.pixi-code:pixi",
+    "jupyter.notebookFileRoot": "${workspaceFolder}"
 }

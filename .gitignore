@@ -8,6 +8,11 @@
 # Data
 data/raw
 data/temp
+data/initial/**/*
+
+# !data/initial/kyh_metadata.csv # have to ask AV or EA can i add it to the repo
+!data/initial/SraRunTable.csv
+!data/initial/kyh_variables_description.csv
 
 # reports and results
 results
