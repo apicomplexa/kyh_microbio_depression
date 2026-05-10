@@ -10,7 +10,7 @@ version = "0.1.0"
 
 [tasks]
 
-snakemake_all = "snakemake --cores all --sdm apptainer"
+snakemake_all = "snakemake --cores all"
 snakemake_all_sdm = "snakemake --cores all --sdm conda apptainer"
 snakemake_dry = "snakemake -n --cores all --sdm conda"
 snakemake_dag = "snakemake -n --dag --quiet | sed -n '/^digraph/,$p' | dot -Tpdf > results/reports/workflow-dag.pdf"
@@ -39,3 +39,7 @@ bioconductor-shortread = { version = ">=1.68.0,<2", channel = "bioconda" }
 openpyxl = ">=3.1.5,<4"
 scipy = ">=1.17.1,<2"
 seaborn = ">=0.13.2,<0.14"
+bioconductor-deseq2 = { version = ">=1.50.2,<2", channel = "bioconda" }
+bioconductor-phyloseq = { version = ">=1.54.0,<2", channel = "bioconda" }
+r-languageserver = { version = ">=0.3.18,<0.4", channel = "conda-forge" }
+r-vegan = ">=2.7_3,<3"

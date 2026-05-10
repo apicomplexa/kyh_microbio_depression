@@ -1,0 +1,23 @@
+include: "../../scripts/sra_run_id.smk"
+
+SRA_RUNS = extract_sra_run_table()
+
+rule AsvNormalization:
+    input:
+        counts_tab = "<results>/ASVs_counts.tsv"
+    output:
+        norm_tab = "<results>/ASVs_counts_normalized.tsv",
+        euclidean_dist = "<results>/ASVs_euclidean_distance.tsv"
+    script:
+        "scripts/asv_normalization.R"
+
+rule AlphaBetaDiversity:
+    input:
+        norm_counts_tab = "<results>/ASVs_counts_normalized.tsv"
+        distances_matrix = "<results>/ASVs_euclidean_distance.tsv"
+    output:
+        plots_pcoa = '<figures>/pcoa.pdf'
+    log:
+        '<reports>/notebooks/alpha_beta.ipynb'
+    notebook:
+        'notebooks/alpha_beta.r.ipynb'

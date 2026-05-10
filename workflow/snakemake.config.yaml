@@ -4,5 +4,6 @@ pathvars:
   samples: 'data/raw/fastq'
   samples_filter: 'data/raw/fastq/filtered'
   temp: 'data/temp'
+  results: 'results'
   reports: 'results/reports'
   figures: 'results/figures'

@@ -2,10 +2,12 @@ configfile: "workflow/snakemake.config.yaml"
 
 include: "steps/01_load_and_trim/Snakefile"
 include: "steps/02_taxa_with_dada2/Snakefile"
+include: "steps/03_alpha_beta/Snakefile"
 
 rule all:
     input:
         mqc_report='<reports>/multiqc/multiqc_report.html',
-        filtered_reads=expand("<samples>/filtered/{sample}_{n}.fastq", sample=SRA_RUNS, n=[1, 2])
-        
+        filtered_reads=expand("<samples>/filtered/{sample}_{n}.fastq", sample=SRA_RUNS, n=[1, 2]),
+        euclidean_dist = "<results>/ASVs_euclidean_distance.tsv",
+        pcoa_plot = '<figures>/pcoa.pdf'
 
