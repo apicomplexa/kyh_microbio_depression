@@ -47,12 +47,13 @@ rule Multiqc:
     input:
         fastqc_dir=expand('<temp>/for_multiqc/fqc/{sra_run}', sra_run=SRA_RUNS ),
         cutadapt_report=expand('<temp>/for_multiqc/cutadapt/report_{sra_run}.json', sra_run=SRA_RUNS),
-        mqcDir='<temp>/for_multiqc'
     output:
         report='<reports>/multiqc/multiqc_report.html',
         reportDir=directory('<reports>/multiqc')
+    params:
+        mqcDir=lambda wc, input: subpath(input.cutadapt_report[1], ancestor=2)
     conda:
         "conda.env.yaml"
     params:
     shell:
-        'multiqc -o {output.reportDir} {input.mqcDir}'
+        'multiqc -o {output.reportDir} {params.mqcDir}'

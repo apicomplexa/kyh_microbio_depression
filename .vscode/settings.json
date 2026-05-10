@@ -7,5 +7,10 @@
     "python.defaultInterpreterPath": "/mnt/d/Projects/03_Science_and_Education/kyh_microbio_depression/.pixi/envs/default/bin/python",
     "python-envs.defaultEnvManager": "renan-r-santos.pixi-code:pixi",
     "python-envs.defaultPackageManager": "renan-r-santos.pixi-code:pixi",
-    "jupyter.notebookFileRoot": "${workspaceFolder}"
+    "jupyter.notebookFileRoot": "${workspaceFolder}",
+    "r.alwaysUseActiveTerminal": false,
+    "r.rpath.linux": "/mnt/d/Projects/03_Science_and_Education/kyh_microbio_depression/.pixi/envs/default/lib/R/bin/R",
+    "r.rterm.linux": "/mnt/d/Projects/03_Science_and_Education/kyh_microbio_depression/.pixi/envs/default/lib/R/bin/R",
+    "r.lsp.multiServer": true,
+    "r.lsp.diagnostics": false
 }

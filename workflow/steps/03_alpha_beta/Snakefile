@@ -13,11 +13,11 @@ rule AsvNormalization:
 
 rule AlphaBetaDiversity:
     input:
-        norm_counts_tab = "<results>/ASVs_counts_normalized.tsv"
+        norm_counts_tab = "<results>/ASVs_counts_normalized.tsv",
         distances_matrix = "<results>/ASVs_euclidean_distance.tsv"
     output:
-        plots_pcoa = '<figures>/pcoa.pdf'
+        plot_pcoa = '<figures>/pcoa.pdf'
     log:
-        '<reports>/notebooks/alpha_beta.ipynb'
+        notebook='<reports>/notebooks/alpha_beta.ipynb'
     notebook:
         'notebooks/alpha_beta.r.ipynb'
