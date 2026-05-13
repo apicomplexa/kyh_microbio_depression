@@ -2,19 +2,28 @@ include: "../../scripts/sra_run_id.smk"
 
 SRA_RUNS = extract_sra_run_table()
 
-rule FilterAndTrim:
-    input:
-        expand("<samples>/trimmed/{sample}_{n}.fastq", sample=SRA_RUNS, n=[1, 2])
-    output:
-        expand("<samples_filter>/{sample}_{n}.fastq", sample=SRA_RUNS, n=[1, 2])
-    notebook:
-        "notebooks/filterAndTrim.r.ipynb"
+rule LearnErrors:
+    input: expand("<samples_filter>/{sample}_R{{n}}.fastq", sample=SRA_RUNS)
+    output: 
+        error_model='<temp>/err_model_R{n}.rds',
+        error_model_plot='<figures>/dada2_error_model_R{n}.png',
+    params:
+        band='R{n}'
+    threads: 6
+    script:
+        'scripts/learnError.R'
 
-rule Dada2:
-    input: rules.FilterAndTrim.output
+rule AVSCalling:
+    input: 
+        fq_for="<samples_filter>/{sample}_R1.fastq",
+        fq_rev="<samples_filter>/{sample}_R2.fastq",
+        error_for='<temp>/err_model_R1.rds',
+        error_rev='<temp>/err_model_R2.rds'
     output:
-        tax='<results>/ASVs_tax.tsv',
-        counts='<results>/ASVs_counts.tsv',
-        fasta='<results>/ASVs.fa'
-    notebook:
-        "notebooks/dada2.r.ipynb"
+        merged_asv='<temp>/{sample}_merged_asv.tsv',
+    threads: 1
+    resources:
+        mem_mb=6500
+    script:
+        'scripts/avs_calling.R'
+    
