@@ -10,9 +10,9 @@ version = "0.1.0"
 
 [tasks]
 
-snakemake_all = "snakemake --cores all"
-snakemake_all_sdm = "snakemake --cores all --sdm conda apptainer"
-snakemake_dry = "snakemake -n --cores all --sdm conda"
+snakemake_all = "snakemake --resources mem_mb=11800 --cores 6 --rerun-incomplete"
+snakemake_unlock = "snakemake --unlock"
+snakemake_dry = "snakemake -n --cores 4"
 snakemake_dag = "snakemake -n --dag --quiet | sed -n '/^digraph/,$p' | dot -Tpdf > results/reports/workflow-dag.pdf"
 new_step = "utils/new_step.sh"
 
