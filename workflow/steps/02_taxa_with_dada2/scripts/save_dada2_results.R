@@ -17,29 +17,15 @@ names(reads_filter_reports) <- sapply(
 seqtab <- readRDS(snakemake@input$seqtab)
 seqtab.nochim <- readRDS(snakemake@input$seqtab_nochim)
 
-reads_loss_summary <- data.frame(
-    input=reads_filter_reports[['reads.in']],
-    filtered=reads_filter_reports[['reads.out']],
-    merged=rowSums(seqtab),
-    nochim=rowSums(seqtab.nochim),
-    nochim_to_input=rowSums(seqtab.nochim) / reads_filter_reports[['reads.in']]
-)
-
-write.table(
-    reads_loss_summary,
-    file=snakemake@output$reads_loss_summary,
-    row.names=F,
-    col.names=T,
-    sep='\t',
-    quote=F
-)
 
 # Save Dada2 pipeline results
-asv_seqs <- colnames(seqtab.nochim)
+seqtab.nochim.filtered <- seqtab.nochim[, colSums(seqtab.nochim) > 0]
+asv_seqs <- colnames(seqtab.nochim.filtered)
 asv_map <- data.frame(
     header=paste(">ASV", seq_along(asv_seqs), sep="_"),
     sequence=asv_seqs
 )
+
 
 # Save ASV sequences in fasta
 asv_fasta <- asv_map |>
@@ -50,11 +36,32 @@ asv_fasta <- asv_map |>
 write(asv_fasta, snakemake@output$fa)
 
 # Save ASV counts in tsv
-asv_tab <- t(seqtab.nochim)
-row.names(asv_tab) <- asv_map$header[match(colnames(seqtab.nochim), asv_map$sequence)]
+asv_tab <- t(seqtab.nochim.filtered)
+row.names(asv_tab) <- asv_map$header[match(colnames(seqtab.nochim.filtered), asv_map$sequence)]
 write.table(asv_tab, snakemake@output$counts, sep="\t", quote=F, col.names=NA)
 
 # Save Taxa table in tsv
-taxa <- readRDS(snakemake@input$taxa)
+taxa <- readRDS(snakemake@input$taxa)[colnames(seqtab.nochim.filtered), ]
 row.names(taxa) <- asv_map$header[match(row.names(taxa), asv_map$sequence)]
 write.table(taxa, snakemake@output$tax, sep="\t", quote=F, col.names=NA)
+
+
+# Save reads loss summary in tsv
+
+reads_loss_summary <- data.frame(
+    input=reads_filter_reports[['reads.in']],
+    filtered=reads_filter_reports[['reads.out']],
+    merged=rowSums(seqtab),
+    nochim=rowSums(seqtab.nochim),
+    nochim_nozero=rowSums(seqtab.nochim.filtered),
+    nochim_to_input=rowSums(seqtab.nochim.filtered) / reads_filter_reports[['reads.in']]
+)
+
+write.table(
+    reads_loss_summary,
+    file=snakemake@output$reads_loss_summary,
+    row.names=F,
+    col.names=T,
+    sep='\t',
+    quote=F
+)
