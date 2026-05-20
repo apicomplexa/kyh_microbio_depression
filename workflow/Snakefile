@@ -1,17 +1,15 @@
 configfile: "workflow/snakemake.config.yaml"
 
+include: "scripts/metadata_constants.smk"
+
 include: "steps/01_load_and_trim/Snakefile"
 include: "steps/02_taxa_with_dada2/Snakefile"
 include: "steps/03_alpha_beta/Snakefile"
 
-include: "scripts/sra_run_id.smk"
-
-SRA_RUNS = extract_sra_run_table()
-
 rule all:
     input:
-        filtered_reads=expand("<samples_filter>/{sample}_R{n}.fastq.gz", sample=SRA_RUNS, n=[1, 2]),
-        # mqc_report='<reports>/multiqc/multiqc_report.html',
-        # euclidean_dist = "<results>/ASVs_euclidean_distance.tsv",
-        # pcoa_plot = '<figures>/pcoa.pdf'
+        reads_loss_summary='<results>/reads_loss_summary.tsv',
+        fa='<results>/ASVs.fa',
+        counts='<results>/ASVs_counts.tsv',
+        tax='<results>/ASVs_taxa.tsv'
 

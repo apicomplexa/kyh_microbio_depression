@@ -1,9 +1,7 @@
-include: "../../scripts/sra_run_id.smk"
-
-SRA_RUNS = extract_sra_run_table()
+include: '../../scripts/metadata_constants.smk'
 
 rule LearnErrors:
-    input: expand("<samples_filter>/{sample}_R{{n}}.fastq", sample=SRA_RUNS)
+    input: expand("<samples_filter>/{sample}_R{{n}}.fastq.gz", sample=SRA_RUNS)
     output: 
         error_model='<temp>/err_model_R{n}.rds',
         error_model_plot='<figures>/dada2_error_model_R{n}.png',
@@ -15,15 +13,57 @@ rule LearnErrors:
 
 rule AVSCalling:
     input: 
-        fq_for="<samples_filter>/{sample}_R1.fastq",
-        fq_rev="<samples_filter>/{sample}_R2.fastq",
-        error_for='<temp>/err_model_R1.rds',
-        error_rev='<temp>/err_model_R2.rds'
+        r1=lambda wc: expand("<samples_filter>/{sample}_R1.fastq.gz", sample=BATCH_TO_SAMPLES[wc.batch]),
+        r2=lambda wc: expand("<samples_filter>/{sample}_R2.fastq.gz", sample=BATCH_TO_SAMPLES[wc.batch]),
+        error_r1='<temp>/err_model_R1.rds',
+        error_r2='<temp>/err_model_R2.rds'
     output:
-        merged_asv='<temp>/{sample}_merged_asv.tsv',
-    threads: 1
+        seqtab='<temp>/batch/{batch}/seqtab.rds',
+        dada2='<temp>/batch/{batch}/dada2.rds',
+    threads: 8
     resources:
-        mem_mb=6500
+        mem_mb=10000
     script:
         'scripts/avs_calling.R'
-    
+
+rule AggregateBatches:
+    input:
+        batches_seqtab=expand('<temp>/batch/{batch}/seqtab.rds', batch=BATCHES)
+    output:
+        seqtab='<temp>/seqtab.rds'
+    script:
+        'scripts/aggregate_seqtabs_batches.R'
+
+rule ChimeraRemoval:
+    input: 
+        seqtab='<temp>/seqtab.rds'
+    output:
+        seqtab_nochim='<temp>/seqtab_nochim.rds'
+    threads: 8
+    resources:
+        mem_mb=10000
+    script:
+        'scripts/chimera_removal.R'
+
+rule AssignTaxonomy:
+    input:
+        seqtab_nochim='<temp>/seqtab_nochim.rds'
+    output:
+        tax='<temp>/taxonomy.rds'
+    threads: 8
+    script:
+        'scripts/assign_taxonomy.R'
+
+rule SaveResults:
+    input: 
+        seqtab='<temp>/seqtab.rds',
+        seqtab_nochim='<temp>/seqtab_nochim.rds',
+        filterAndTrimReports=expand('<reports>/qc/filterAndTrim/report_{sra_run}.tsv', sra_run=SRA_RUNS),
+        taxa='<temp>/taxonomy.rds'
+    output:
+        reads_loss_summary='<results>/reads_loss_summary.tsv',
+        fa='<results>/ASVs.fa',
+        counts='<results>/ASVs_counts.tsv',
+        tax='<results>/ASVs_taxa.tsv'
+    script:
+        'scripts/save_dada2_results.R'
