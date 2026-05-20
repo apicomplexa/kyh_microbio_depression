@@ -39,6 +39,11 @@ rule FilterAndTrim:
     output:
         fq=expand("<samples_filter>/{{sample}}_R{n}.fastq.gz", n=[1, 2]),
         report='<reports>/qc/filterAndTrim/report_{sample}.tsv'
+    params:
+        trunc_len_f=config['trimming']['trunc_len_f'],
+        trunc_len_r=config['trimming']['trunc_len_r'],
+        max_ee_f=config['trimming']['max_ee_f'],
+        max_ee_r=config['trimming']['max_ee_r']
     resources:
         mem_mb=1100
     script:

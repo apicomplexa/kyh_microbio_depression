@@ -39,10 +39,10 @@ reverse_reads_filtered <- extract_oneside_reads(snakemake@output$fq, T)
 filter_sats = filterAndTrim(
 	forward_reads, forward_reads_filtered,
 	reverse_reads, reverse_reads_filtered, 
-	maxEE=c(4,4),
-    rm.phix=TRUE, 
-    minLen=100, 
-    truncLen=c(220,220),
+	maxEE=c(snakemake@params$max_ee_f, snakemake@params$max_ee_r),
+    rm.phix=TRUE,
+    minLen=100,
+    truncLen=c(snakemake@params$trunc_len_f, snakemake@params$trunc_len_r),
     multithread=FALSE
 )
 

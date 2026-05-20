@@ -12,5 +12,5 @@
     "r.rpath.linux": "/mnt/d/Projects/03_Science_and_Education/kyh_microbio_depression/.pixi/envs/default/lib/R/bin/R",
     "r.rterm.linux": "/mnt/d/Projects/03_Science_and_Education/kyh_microbio_depression/.pixi/envs/default/lib/R/bin/R",
     "r.lsp.multiServer": true,
-    "r.lsp.diagnostics": false
+    "r.lsp.diagnostics": true
 }
