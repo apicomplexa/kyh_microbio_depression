@@ -1,10 +1,15 @@
-configfile: "workflow/snakemake.config.yaml"
+from snakemake.utils import min_version
 
-include: "scripts/metadata_constants.smk"
+min_version("9.19")
 
-include: "steps/01_load_and_trim/Snakefile"
-include: "steps/02_taxa_with_dada2/Snakefile"
-include: "steps/03_alpha_beta/Snakefile"
+configfile: "config/config.yaml"
+
+include: "rules/common.smk"
+include: "rules/load_and_trim.smk"
+include: "rules/dada2.smk"
+include: "rules/functional.smk"
+include: "rules/diversity.smk"
+# include: "rules/diff_abundance.smk"  # not wired up yet, see TODO in that file
 
 rule all:
     input:
@@ -12,7 +17,5 @@ rule all:
         fa='<results>/ASVs.fa',
         counts='<results>/ASVs_counts.tsv',
         tax='<results>/ASVs_taxa.tsv',
-        ab_report = '<reports>/notebooks/alpha_beta.pdf',
+        ab_report='<reports>/alpha_beta.pdf',
         pathways='<results>/picrust2/KO_metagenome_out/pred_metagenome_unstrat.tsv.gz'
-
-

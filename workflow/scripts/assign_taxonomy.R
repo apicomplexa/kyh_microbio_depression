@@ -1,7 +1,7 @@
 library(dada2)
 library(DECIPHER)
 
-load('data/raw/SILVA_SSU_r138.2_v2.RData')
+load(snakemake@input$silva)
 
 seqtab.nochim <- readRDS(snakemake@input$seqtab_nochim)
 

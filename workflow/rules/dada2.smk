@@ -1,18 +1,16 @@
-include: '../../scripts/metadata_constants.smk'
-
 rule LearnErrors:
     input: expand("<samples_filter>/{sample}_R{{n}}.fastq.gz", sample=SRA_RUNS)
-    output: 
+    output:
         error_model='<temp>/err_model_R{n}.rds',
         error_model_plot='<figures>/dada2_error_model_R{n}.png',
     params:
         band='R{n}'
     threads: 6
     script:
-        'scripts/learnError.R'
+        '../scripts/learn_error.R'
 
 rule AVSCalling:
-    input: 
+    input:
         r1=lambda wc: expand("<samples_filter>/{sample}_R1.fastq.gz", sample=BATCH_TO_SAMPLES[wc.batch]),
         r2=lambda wc: expand("<samples_filter>/{sample}_R2.fastq.gz", sample=BATCH_TO_SAMPLES[wc.batch]),
         error_r1='<temp>/err_model_R1.rds',
@@ -24,7 +22,7 @@ rule AVSCalling:
     resources:
         mem_mb=10000
     script:
-        'scripts/avs_calling.R'
+        '../scripts/asv_calling.R'
 
 rule AggregateBatches:
     input:
@@ -32,10 +30,10 @@ rule AggregateBatches:
     output:
         seqtab='<temp>/seqtab.rds'
     script:
-        'scripts/aggregate_seqtabs_batches.R'
+        '../scripts/aggregate_seqtabs_batches.R'
 
 rule ChimeraRemoval:
-    input: 
+    input:
         seqtab='<temp>/seqtab.rds'
     output:
         seqtab_nochim='<temp>/seqtab_nochim.rds'
@@ -43,19 +41,20 @@ rule ChimeraRemoval:
     resources:
         mem_mb=10000
     script:
-        'scripts/chimera_removal.R'
+        '../scripts/chimera_removal.R'
 
 rule AssignTaxonomy:
     input:
-        seqtab_nochim='<temp>/seqtab_nochim.rds'
+        seqtab_nochim='<temp>/seqtab_nochim.rds',
+        silva=config['silva_db']
     output:
         tax='<temp>/taxonomy.rds'
     threads: 8
     script:
-        'scripts/assign_taxonomy.R'
+        '../scripts/assign_taxonomy.R'
 
 rule SaveResults:
-    input: 
+    input:
         seqtab='<temp>/seqtab.rds',
         seqtab_nochim='<temp>/seqtab_nochim.rds',
         filterAndTrimReports=expand('<reports>/qc/filterAndTrim/report_{sra_run}.tsv', sra_run=SRA_RUNS),
@@ -66,28 +65,4 @@ rule SaveResults:
         counts='<results>/ASVs_counts.tsv',
         tax='<results>/ASVs_taxa.tsv'
     script:
-        'scripts/save_dada2_results.R'
-
-rule FunctionalAnalysis:
-    input:
-        fa='<results>/ASVs.fa',
-        counts='<results>/ASVs_counts.tsv'
-    output:
-        path='<results>/picrust2/pathways_out/path_abun_unstrat.tsv.gz',
-        ko='<results>/picrust2/KO_metagenome_out/pred_metagenome_unstrat.tsv.gz'
-    params:
-        outdir=lambda wc, output: subpath(output.path, ancestor=2),
-        nsti=2
-    conda: "picrust2"
-    threads: 12
-    shell:
-        """
-        rm -rf {params.outdir}
-        picrust2_pipeline.py \
-            -s {input.fa} \
-            -i {input.counts} \
-            -o {params.outdir} \
-            -p {threads} \
-            --max_nsti {params.nsti} \
-            --verbose
-        """
+        '../scripts/save_dada2_results.R'

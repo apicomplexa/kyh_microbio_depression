@@ -8,16 +8,21 @@
 # Data
 data/raw
 data/temp
-data/initial/**/*
 
-# !data/initial/kyh_metadata.csv # have to ask AV or EA can i add it to the repo
-!data/initial/SraRunTable.csv
-!data/initial/kyh_variables_description.csv
+# resources: reference DBs + private metadata.
+# Only the two public files below are tracked.
+# kyh_metadata.csv / *.dta / *.xlsx stay untracked — have to ask AV or EA
+# before adding any subject-level clinical metadata to the repo.
+resources/*
+!resources/metadata
+resources/metadata/*
+!resources/metadata/SraRunTable.csv
+!resources/metadata/kyh_variables_description.csv
 
 # reports and results
 results
 
 # logs
-log
+logs
 /.quarto/
 **/*.quarto_ipynb

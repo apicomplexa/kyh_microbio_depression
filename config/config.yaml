@@ -1,5 +1,5 @@
 pathvars:
-  data_initial: 'data/initial'
+  metadata: 'resources/metadata'
   data_raw: 'data/raw'
   samples: 'data/raw/fastq'
   samples_filter: 'data/raw/fastq/filtered'
@@ -7,7 +7,9 @@ pathvars:
   results: 'results'
   reports: 'results/reports'
   figures: 'results/figures'
-samples_meta: "data/initial/all_meta.csv"
+  logs: 'logs'
+samples_meta: "resources/metadata/all_meta.csv"
+silva_db: "resources/SILVA_SSU_r138.2_v2.RData"
 trimming:
   trunc_len_f: 230
   trunc_len_r: 230

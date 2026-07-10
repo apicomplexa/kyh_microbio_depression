@@ -3,8 +3,8 @@ channels:
   - conda-forge
   - bioconda
   - nodefaults
-variables:
-  NCBI_API_KEY: 4cf167d8d16b5558aab9dbd4d0a015e4ed09
+# NCBI_API_KEY used to live here as a `variables:` entry. Never commit it —
+# export it in your shell instead:  export NCBI_API_KEY=...
 dependencies:
   - sra-tools==3.2.1
   - bioconda::cutadapt==5.2

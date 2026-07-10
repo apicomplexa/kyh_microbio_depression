@@ -10,11 +10,13 @@ version = "0.1.0"
 
 [tasks]
 
-snakemake_all = "snakemake --sdm conda --resources mem_mb=10500 --cores 8 --rerun-incomplete"
+# Flags live in workflow/profiles/default/config.yaml, which Snakemake 8+
+# discovers automatically when invoked from the repository root.
+snakemake_all = "snakemake"
 snakemake_unlock = "snakemake --unlock"
 snakemake_dry = "snakemake -n --cores 4"
 snakemake_dag = "snakemake -n --dag --quiet | sed -n '/^digraph/,$p' | dot -Tpdf > results/reports/workflow-dag.pdf"
-new_step = "utils/new_step.sh"
+snakemake_report = "snakemake --report results/reports/workflow-report.html"
 
 [dependencies]
 python = ">=3.13.13,<3.14"

@@ -13,7 +13,7 @@ params:
     i_norm_counts_tab: "results/ASVs_counts_normalized.tsv"
     i_distances_matrix: "results/ASVs_euclidean_distance.tsv"
     i_taxa_table: "results/ASVs_taxa.tsv"
-    all_meta: "data/initial/all_meta.csv"
+    all_meta: "resources/metadata/all_meta.csv"
 ---
 
 ```{r}
@@ -28,8 +28,8 @@ library(dplyr)
 library(tibble)
 library(dendextend)
 
-source("workflow/steps/03_alpha_beta/scripts/ploting/pcoa.R")
-source("workflow/steps/03_alpha_beta/scripts/ploting/dendrogram.R")
+source("workflow/scripts/common/pcoa.R")
+source("workflow/scripts/common/dendrogram.R")
 
 
 norm_counts_tab <- read.csv(params$i_norm_counts_tab,sep = "\t", row.names='X')

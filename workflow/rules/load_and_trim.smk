@@ -24,7 +24,7 @@ rule CutAdapters:
         fastq=expand('<samples>/trimmed/{{sra_run}}_R{n}.fastq.gz', n=[1,2]),
         report='<reports>/qc/cutadapt/report_{sra_run}.json.gz'
     log:
-        "log/cutadapt/{sra_run}.log"
+        "<logs>/cutadapt/{sra_run}.log"
     shell:
         "cutadapt "
         "-g CCTACGGGNGGCWGCAG "
@@ -47,4 +47,4 @@ rule FilterAndTrim:
     resources:
         mem_mb=1100
     script:
-        'scripts/dada2filterAndTrim.R'
+        '../scripts/dada2_filter_and_trim.R'

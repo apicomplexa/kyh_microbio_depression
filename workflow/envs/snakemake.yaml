@@ -1,0 +1,9 @@
+name: snakemake
+channels:
+  - conda-forge
+  - bioconda
+  - nodefaults
+dependencies:
+  - python>=3.13,<3.14
+  - snakemake>=9.19,<10
+  - pandas>=2.3,<3
