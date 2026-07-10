@@ -1,7 +1,3 @@
-include: "../../scripts/sra_run_id.smk"
-
-SRA_RUNS = extract_sra_run_table()
-
 rule AsvNormalization:
     input:
         counts_tab = "<results>/ASVs_counts.tsv"
@@ -16,8 +12,11 @@ rule AlphaBetaDiversity:
         norm_counts_tab = "<results>/ASVs_counts_normalized.tsv",
         distances_matrix = "<results>/ASVs_euclidean_distance.tsv"
     output:
-        plot_pcoa = '<figures>/pcoa.pdf'
-    log:
-        notebook='<reports>/notebooks/alpha_beta.ipynb'
-    notebook:
-        'notebooks/alpha_beta.r.ipynb'
+        ab_report = '<reports>/notebooks/alpha_beta.pdf'
+    shell:
+        "quarto render workflow/steps/03_alpha_beta/notebooks/report.qmd --to pdf "
+        "-o AlphaBetaDiversity.pdf "
+        "-P i_norm_counts_tab:{input.norm_counts_tab} "
+        "-P i_distances_matrix:{input.distances_matrix} "
+        "&& "
+        "mv AlphaBetaDiversity.pdf {output.ab_report}"

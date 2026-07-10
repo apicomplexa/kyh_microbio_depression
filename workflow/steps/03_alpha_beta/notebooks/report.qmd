@@ -1,0 +1,142 @@
+---
+title: "Alpha-beta pruning"
+author: "Alex Zobolev"
+date: today
+subtitle: "Preliminary results"
+abstract: "Everything is very bad. There are no statistical differences of Alpha and Beta diversity between any groups (Depression_vs_Control, SeasonCold_vs_SeasonHot, SeasonColdDepression_vs_SeasonColdControl, SeasonHotDepression_vs_SeasonHotControl). I tested Beta diversity with PERMANOVA and Alpha diversity with Chao1, Shannon, Simpson test. I will try to do something else like diff abundance with DeSeq2, but I don't have much hope for it."
+execute:
+  echo: false
+  warning: false
+  message: false
+  eval: true
+params:
+    i_norm_counts_tab: "results/ASVs_counts_normalized.tsv"
+    i_distances_matrix: "results/ASVs_euclidean_distance.tsv"
+    i_taxa_table: "results/ASVs_taxa.tsv"
+    all_meta: "data/initial/all_meta.csv"
+---
+
+```{r}
+#| output: false
+#| label: prepare data
+
+library(phyloseq)
+library(ggplot2)
+library(vegan)
+library(gt)
+library(dplyr)
+library(tibble)
+library(dendextend)
+
+source("workflow/steps/03_alpha_beta/scripts/ploting/pcoa.R")
+source("workflow/steps/03_alpha_beta/scripts/ploting/dendrogram.R")
+
+
+norm_counts_tab <- read.csv(params$i_norm_counts_tab,sep = "\t", row.names='X')
+samples_info <- read.csv(params$all_meta, row.names='Run')[colnames(norm_counts_tab), ]
+euc_dist_all <- as.dist(as.matrix(read.csv(
+    params$i_distances_matrix, 
+    sep='\t', 
+    header=T,
+    row.names=1
+)))
+taxa_table <- as.matrix(read.csv(params$i_taxa_table, sep = "\t", row.names=1))
+
+
+counts_phy <- otu_table(norm_counts_tab, taxa_are_rows = T)
+samples_info_phy <- sample_data(samples_info)
+taxa_table_phy <- tax_table(taxa_table)
+
+phy <- phyloseq(counts_phy, samples_info_phy, taxa_table_phy)
+
+meta <- data.frame(sample_data(phy))
+predictors <- c('depr_or_control', 'batch', 'd_sex', 'd_age_hc')
+predictors <- predictors[meta[predictors] |> sapply(function(x) length(unique(x))) > 1]
+rhs <- paste(predictors, collapse = " + ")
+```
+
+# Tree of samples
+
+```{r}
+#| label: tree-samples
+#| fig-width: 10
+#| fig-height: 10
+
+plot_dendrogram(euc_dist_all, phy, depr_or_control)
+```
+
+As we can see, there is no clear separation between groups of samples. There are some clusters of samples, but they are not related to the groups of interest (depression vs control).
+
+# Beta dispersion
+
+## Plot ordination using PCoA
+
+Plotting PCoA with Euclidean distance, we can see that there is no clear separation between groups.
+
+```{r}
+#| label: ord-plot
+pcoa <- plot_pcoa(phy, euc_dist_all, depr_or_control)$pcoa
+plot_pcoa(phy, euc_dist_all, paste(depr_or_control, season, sep="_"))
+``` 
+
+```{r}
+#| label: find-pcoa-outliers
+scores <- as.data.frame(pcoa$points)
+d2 <- mahalanobis(
+    scores,
+    colMeans(scores),
+    cov(scores)
+)
+outliers <- which(
+    d2 > qchisq(0.975, df = 2)
+)
+```
+
+There some extremes samples (`{r} names(outliers)`) that are far from the others. So i have to check what is biological or technical reason for it.
+
+Then, I'll check where on tree are these samples
+
+```{r}
+#| label: tree-extremes
+#| fig-width: 10
+#| fig-height: 10
+
+plot_dendrogram(euc_dist_all, phy, rownames(sample_data(phy)) %in% names(outliers))
+```
+
+These samples located on different leafs of dendrogram
+
+## PERMANOVA
+
+I use PERMANOVA (Permutational Multivariate Analysis of Variance) to test Beta diversity.
+
+```{r}
+pmnv_test <- function (frm) {
+    result <- adonis2(frm, data = meta, by='term', parallel = 30)
+    formatted_result <- result |>
+        as.data.frame() |>
+        tibble::rownames_to_column("term") |>
+        gt(rowname_col = "term") |>
+        gt::fmt_number(columns = c("R2", "F", "Pr(>F)"), decimals = 4)
+    return(list(
+        result=result,
+        formatted_result=formatted_result
+    ))
+}
+form_string <- paste("euc_dist_all", "~", rhs)
+f <- as.formula(form_string)
+```
+
+
+
+Checking Beta dispersion between Microbiota of pations with depression and without it using PERMANOVA test with formula `{r} form_string`.
+
+```{r}
+#| label: permanova-depression
+#| tbl-cap: "Beta dispersion between Microbiota of pations with depression and without it using PERMANOVA test"
+depr_vs_control_pmnv <- pmnv_test(f)
+depr_vs_control_pmnv$formatted_result
+```
+
+So there is significant (p-value=`{r} depr_vs_control_pmnv$result[1, 'Pr(>F)']`) beta dispersion between Microbiota of pations with depression. Microbiota features explains `{r} depr_vs_control_pmnv$result[1, 'R2']` of differences between patients depression status.
+

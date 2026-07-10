@@ -1,7 +1,25 @@
 library("DESeq2")
 
 if (!exists("snakemake")) {
-  snakemake <- list(
+  library(methods)
+  Snakemake <- setClass(
+      "Snakemake",
+      slots = c(
+          input = "list",
+          output = "list",
+          params = "list",
+          wildcards = "list",
+          threads = "numeric",
+          log = "list",
+          resources = "list",
+          config = "list",
+          rule = "character",
+          bench_iteration = "numeric",
+          scriptdir = "character",
+          source = "function"
+      )
+  )
+  snakemake <- Snakemake(
     input=list(counts_tab = "results/ASVs_counts.tsv"),
     output=list(norm_tab = "results/ASVs_counts_normalized.tsv", euclidean_dist = "results/ASVs_euclidean_distance.tsv")
   )
@@ -18,6 +36,7 @@ deseq_counts <- DESeqDataSetFromMatrix(
   ~ 1
 )
 
+deseq_counts <- estimateSizeFactors(deseq_counts, type = "poscounts")
 deseq_counts_vst <- varianceStabilizingTransformation(deseq_counts)
 
 vst_trans_count_tab <- assay(deseq_counts)
