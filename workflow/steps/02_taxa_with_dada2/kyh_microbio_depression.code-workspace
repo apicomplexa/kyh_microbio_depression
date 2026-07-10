@@ -1,0 +1,24 @@
+{
+	"folders": [
+		{
+			"path": "../../.."
+		}
+	],
+	"settings": {
+		"r.alwaysUseActiveTerminal": false,
+		"r.rpath.linux": "${workspaceFolder}/.pixi/envs/default/lib/R/bin/R",
+		"r.rterm.linux": "${workspaceFolder}/.pixi/envs/default/lib/R/bin/R",
+		"r.lsp.multiServer": false,
+		"r.lsp.diagnostics": true,
+		"r.libPaths": [
+			"${workspaceFolder}/.pixi/envs/default/lib/R/library"
+		],
+		"r.liveShare.timeout": 600000,
+		"quarto.render.previewType": "internal",
+		"python-envs.defaultEnvManager": "renan-r-santos.pixi-code:pixi",
+		"python-envs.defaultPackageManager": "renan-r-santos.pixi-code:pixi",
+		"r.session.objectTimeout": 500,
+		"r.useRenvLibPath": false,
+		"r.lsp.use_stdio": true
+	}
+}

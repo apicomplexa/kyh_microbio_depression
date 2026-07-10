@@ -18,8 +18,8 @@ rule AVSCalling:
         error_r1='<temp>/err_model_R1.rds',
         error_r2='<temp>/err_model_R2.rds'
     output:
-        seqtab='<temp>/batch/{batch}/seqtab.rds',
-        dada2='<temp>/batch/{batch}/dada2.rds',
+        seqtab=temp('<temp>/batch/{batch}/seqtab.rds'),
+        dada2=temp('<temp>/batch/{batch}/dada2.rds'),
     threads: 8
     resources:
         mem_mb=10000
@@ -67,3 +67,27 @@ rule SaveResults:
         tax='<results>/ASVs_taxa.tsv'
     script:
         'scripts/save_dada2_results.R'
+
+rule FunctionalAnalysis:
+    input:
+        fa='<results>/ASVs.fa',
+        counts='<results>/ASVs_counts.tsv'
+    output:
+        path='<results>/picrust2/pathways_out/path_abun_unstrat.tsv.gz',
+        ko='<results>/picrust2/KO_metagenome_out/pred_metagenome_unstrat.tsv.gz'
+    params:
+        outdir=lambda wc, output: subpath(output.path, ancestor=2),
+        nsti=2
+    conda: "picrust2"
+    threads: 12
+    shell:
+        """
+        rm -rf {params.outdir}
+        picrust2_pipeline.py \
+            -s {input.fa} \
+            -i {input.counts} \
+            -o {params.outdir} \
+            -p {threads} \
+            --max_nsti {params.nsti} \
+            --verbose
+        """

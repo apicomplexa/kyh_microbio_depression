@@ -1,3 +1,7 @@
 library(dada2)
-seqtab <- mergeSequenceTables(tables=snakemake@input$batches_seqtab)
+if (length(snakemake@input$batches_seqtab) < 2) {
+    seqtab <- readRDS(snakemake@input$batches_seqtab[[1]])
+} else {
+    seqtab <- mergeSequenceTables(tables=snakemake@input$batches_seqtab)
+}
 saveRDS(seqtab, snakemake@output$seqtab)
