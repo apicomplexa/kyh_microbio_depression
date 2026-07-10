@@ -1,16 +1,36 @@
 {
+    "files.watcherExclude": {
+        "**/.snakemake/**": true,
+        "**/.pixi/**": true,
+        "**/.mamba/**": true,
+        "**/.conda/**": true,
+    },
+
+    "search.exclude": {
+        "**/.snakemake": true,
+        "**/.pixi": true,
+    },
     "python-envs.workspaceSearchPaths": [
         ".venv",
         "*/.venv",
         ".pixi/envs"
     ],
-    "python.defaultInterpreterPath": "/mnt/d/Projects/03_Science_and_Education/kyh_microbio_depression/.pixi/envs/default/bin/python",
-    "python-envs.defaultEnvManager": "renan-r-santos.pixi-code:pixi",
-    "python-envs.defaultPackageManager": "renan-r-santos.pixi-code:pixi",
+    "python.defaultInterpreterPath": "${workspaceFolder}/.pixi/envs/default/bin/python",
     "jupyter.notebookFileRoot": "${workspaceFolder}",
     "r.alwaysUseActiveTerminal": false,
-    "r.rpath.linux": "/mnt/d/Projects/03_Science_and_Education/kyh_microbio_depression/.pixi/envs/default/lib/R/bin/R",
-    "r.rterm.linux": "/mnt/d/Projects/03_Science_and_Education/kyh_microbio_depression/.pixi/envs/default/lib/R/bin/R",
-    "r.lsp.multiServer": true,
-    "r.lsp.diagnostics": true
+    "r.rpath.linux": "${workspaceFolder}/.pixi/envs/default/lib/R/bin/R",
+    "r.rterm.linux": "${workspaceFolder}/.pixi/envs/default/lib/R/bin/R",
+    "r.lsp.multiServer": false,
+    "r.lsp.diagnostics": true,
+    "r.libPaths": [
+        "${workspaceFolder}/.pixi/envs/default/lib/R/library"
+    ],
+    "r.liveShare.timeout": 600000,
+    "r.lsp.timeout": 360,
+    "quarto.render.previewType": "internal",
+    "python-envs.defaultEnvManager": "renan-r-santos.pixi-code:pixi",
+    "python-envs.defaultPackageManager": "renan-r-santos.pixi-code:pixi",
+    "r.session.objectTimeout": 500,
+    "r.useRenvLibPath": false,
+    "r.lsp.use_stdio": true,
 }
