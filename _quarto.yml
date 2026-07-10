@@ -1,0 +1,38 @@
+project:
+  type: default
+  execute-dir: project
+
+toc: true
+toc-depth: 3
+number-sections: true
+
+format:
+  html:
+    toc-location: left
+    embed-resources: true
+    theme: cosmo
+    highlight-style: github
+    code-tools: false
+    smooth-scroll: true
+    code-fold: true
+  pdf:
+    documentclass: scrreprt
+    classoption: [oneside, a4paper]
+    papersize: a4
+    geometry:
+      - top=1cm
+      - bottom=1cm
+      - left=1cm
+      - right=1cm
+    fontsize: 11pt
+    linestretch: 1.35
+    colorlinks: true
+    linkcolor: blue
+    urlcolor: blue
+    citecolor: blue
+    header-includes: |
+      \usepackage[utf8]{inputenc}
+      \usepackage{csquotes}
+      \usepackage{booktabs}
+      \usepackage{longtable}
+      \usepackage{array}

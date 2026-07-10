@@ -19,3 +19,5 @@ results
 
 # logs
 log
+/.quarto/
+**/*.quarto_ipynb

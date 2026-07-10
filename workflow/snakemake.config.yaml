@@ -7,6 +7,7 @@ pathvars:
   results: 'results'
   reports: 'results/reports'
   figures: 'results/figures'
+samples_meta: "data/initial/all_meta.csv"
 trimming:
   trunc_len_f: 230
   trunc_len_r: 230
