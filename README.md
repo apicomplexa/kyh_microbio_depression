@@ -38,11 +38,10 @@ workflow/
   rules/*.smk                 rule modules
   scripts/*.R                 scripts invoked via the `script:` directive
   scripts/common/*.R          shared R libraries (plotting helpers), `source()`d
-  notebooks/*.ipynb           notebooks invoked via the `notebook:` directive
-  report/                     `--report` captions (.rst) + the Quarto report (.qmd)
+  notebooks/                  eda and dev notebooks (.ipynb primarily)
   envs/*.yaml                 conda environments
+  reports/*.qmd               Quarto reports
   profiles/default/config.yaml
-analysis/                     exploratory notebooks, not part of the pipeline
 data/{raw,temp}/              reads and intermediates (gitignored)
 logs/                         rule logs (gitignored)
 results/                      outputs (gitignored)
