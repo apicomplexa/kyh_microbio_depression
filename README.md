@@ -38,9 +38,9 @@ workflow/
   rules/*.smk                 rule modules
   scripts/*.R                 scripts invoked via the `script:` directive
   scripts/common/*.R          shared R libraries (plotting helpers), `source()`d
-  notebooks/                  eda and dev notebooks (.ipynb primarily)
+  notebooks/                  eda (started from _eda) and dev (started from _dev) notebooks (.ipynb primarily)
   envs/*.yaml                 conda environments
-  reports/*.qmd               Quarto reports
+  reports/*.qmd               Ready to render Quarto reports
   profiles/default/config.yaml
 data/{raw,temp}/              reads and intermediates (gitignored)
 logs/                         rule logs (gitignored)
