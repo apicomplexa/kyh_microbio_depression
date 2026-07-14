@@ -3,7 +3,7 @@ title: "Alpha-beta pruning"
 author: "Alex Zobolev"
 date: today
 subtitle: "Preliminary results"
-abstract: "Everything is very bad. There are no statistical differences of Alpha and Beta diversity between any groups (Depression_vs_Control, SeasonCold_vs_SeasonHot, SeasonColdDepression_vs_SeasonColdControl, SeasonHotDepression_vs_SeasonHotControl). I tested Beta diversity with PERMANOVA and Alpha diversity with Chao1, Shannon, Simpson test. I will try to do something else like diff abundance with DeSeq2, but I don't have much hope for it."
+abstract: ""
 execute:
   echo: false
   warning: false

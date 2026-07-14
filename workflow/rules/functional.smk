@@ -8,7 +8,8 @@ rule FunctionalAnalysis:
     params:
         outdir=lambda wc, output: subpath(output.path, ancestor=2),
         nsti=2
-    conda: "../envs/picrust2.yaml"
+    # conda: "../envs/picrust2.yaml"
+    conda: "picrust2" # ready conda env because snakemake on my system refuse to download dependencies 
     threads: 12
     shell:
         """

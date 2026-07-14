@@ -78,3 +78,64 @@ the TODO at the top of that file.
 Subject-level clinical metadata (`resources/metadata/`) is **not** tracked.
 Only `SraRunTable.csv` and `kyh_variables_description.csv` are committed. Check
 `.gitignore` before adding anything under `resources/`.
+
+
+## Analysis roadmap
+
+### Upstream & ASV inference
+- [x] Contaminant removal — done upstream, before NCBI upload (outside this pipeline)
+- [x] SRA download + primer trimming (cutadapt) + DADA2 quality filtering, with QC reports
+- [x] Error models + per-batch ASV calling (DADA2), batch merge, chimera removal
+- [x] Taxonomy assignment (DECIPHER IdTaxa vs SILVA SSU r138.2)
+- [x] Results export: ASVs.fa, ASVs_counts.tsv, ASVs_taxa.tsv, reads_loss_summary.tsv
+- [ ] Prevalence/abundance filtering + drop mitochondria / chloroplast / unassigned
+- [ ] (optional) Phylogenetic tree (align + build) → enables UniFrac / Faith's PD
+
+### Diversity — beta
+- [x] DESeq2 VST normalization + Euclidean distance matrix
+- [x] PCoA ordination + sample dendrogram
+- [x] PERMANOVA (adonis2) with covariates (batch, sex, age)
+- [ ] Switch adonis2 to by="margin" (or reorder terms) so the depression effect is covariate-adjusted
+- [ ] Fix mislabeled "beta dispersion" wording (PERMANOVA tests location, not dispersion)
+- [ ] betadisper / PERMDISP dispersion test (required to interpret PERMANOVA correctly)
+- [ ] Resolve flagged PCoA outliers (biological vs technical)
+
+### Diversity — alpha  (NOT STARTED)
+- [ ] Feed raw ASVs_counts.tsv into the report (VST is invalid for richness)
+- [ ] Alpha metrics: Observed, Shannon (+ Faith's PD if a tree is built)
+- [ ] Group tests, covariate-adjusted (case/control)
+
+- [ ] Harden alpha/beta report to publish-ready
+
+### Differential abundance — ASVs
+- [ ] Wire up diff_abundance.smk (currently a stub)
+- [ ] DESeq2 + MaAsLin2 on raw counts, covariate-adjusted (case/control); report consensus + effect sizes
+- [ ] Report, publish-ready
+
+### Functional prediction
+- [x] PICRUSt2 pipeline → KO + pathway unstrat tables (max_nsti 2)
+- [ ] NSTI QC: report weighted / per-sample NSTI, document filtering + prediction limitations
+- [ ] Pin PICRUSt2 env (envs/picrust2.yaml) instead of hardcoded `conda: picrust2`
+- [ ] Gut-brain / gut-metabolic modules (GBM/GMM, Omixer-RPM) — depression-specific layer
+- [ ] Functional report, publish-ready
+
+### Differential abundance — KO / KEGG pathways
+- [ ] DESeq2 + MaAsLin2 on KO and pathway tables
+- [ ] Report, publish-ready
+
+### Community structure
+- [ ] DMM clustering: model selection (Laplace / BIC), assign community types
+- [ ] Test community type ~ depression status + covariates (case/control)
+- [ ] Report, publish-ready
+
+### Interaction networks
+- [ ] Per-group co-occurrence networks (SPIEC-EASI / SparCC, compositionality-aware)
+- [ ] Differential network analysis depression vs control (e.g. NetCoMi) + hub / keystone taxa
+- [ ] Report, publish-ready
+
+### Cross-cutting (publish-readiness)
+- [ ] Lock covariate set (batch, sex, age; + antidepressants/PPIs/BMI/Bristol if available) and apply consistently across DA / DMM / networks
+- [ ] Consistent FDR across all DA blocks; report effect sizes, not only p-values
+- [ ] Fixed seeds for stochastic steps (DMM, SPIEC-EASI) + env/version locking (pixi / Apptainer) + sessionInfo
+- [ ] STORMS reporting checklist
+- [ ] Unified methods draft + consistent figure style
