@@ -95,13 +95,13 @@ Only `SraRunTable.csv` and `kyh_variables_description.csv` are committed. Check
 - [x] DESeq2 VST normalization + Euclidean distance matrix
 - [x] PCoA ordination + sample dendrogram
 - [x] PERMANOVA (adonis2) with covariates (batch, sex, age)
-- [ ] Switch adonis2 to by="margin" (or reorder terms) so the depression effect is covariate-adjusted
+- [x] Switch adonis2 to by="margin" (or reorder terms) so the depression effect is covariate-adjusted
 - [ ] Fix mislabeled "beta dispersion" wording (PERMANOVA tests location, not dispersion)
-- [ ] betadisper / PERMDISP dispersion test (required to interpret PERMANOVA correctly)
+- [x] betadisper / PERMDISP dispersion test (required to interpret PERMANOVA correctly)
 - [ ] Resolve flagged PCoA outliers (biological vs technical)
 
 ### Diversity — alpha  (NOT STARTED)
-- [ ] Feed raw ASVs_counts.tsv into the report (VST is invalid for richness)
+- [x] Feed raw ASVs_counts.tsv into the report (VST is invalid for richness)
 - [ ] Alpha metrics: Observed, Shannon (+ Faith's PD if a tree is built)
 - [ ] Group tests, covariate-adjusted (case/control)
 

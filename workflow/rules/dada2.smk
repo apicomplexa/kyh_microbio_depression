@@ -58,11 +58,14 @@ rule SaveResults:
         seqtab='<temp>/seqtab.rds',
         seqtab_nochim='<temp>/seqtab_nochim.rds',
         filterAndTrimReports=expand('<reports>/qc/filterAndTrim/report_{sra_run}.tsv', sra_run=SRA_RUNS),
-        taxa='<temp>/taxonomy.rds'
+        taxa='<temp>/taxonomy.rds',
+        metadata=config['samples_meta']
     output:
         reads_loss_summary='<results>/reads_loss_summary.tsv',
         fa='<results>/ASVs.fa',
         counts='<results>/ASVs_counts.tsv',
-        tax='<results>/ASVs_taxa.tsv'
+        tax='<results>/ASVs_taxa.tsv',
+        reads_loss_plot='<figures>/reads_loss_plot.png',
+        red_zone_samples='<results>/red_zone_samples.txt'
     script:
         '../scripts/save_dada2_results.R'

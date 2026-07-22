@@ -21,7 +21,7 @@
     "r.rpath.linux": "${workspaceFolder}/.pixi/envs/default/lib/R/bin/R",
     "r.rterm.linux": "${workspaceFolder}/.pixi/envs/default/lib/R/bin/R",
     "r.lsp.multiServer": false,
-    "r.lsp.diagnostics": true,
+    "r.lsp.diagnostics": false,
     "r.libPaths": [
         "${workspaceFolder}/.pixi/envs/default/lib/R/library"
     ],
@@ -33,4 +33,5 @@
     "r.session.objectTimeout": 500,
     "r.useRenvLibPath": false,
     "r.lsp.use_stdio": true,
+    "r.lsp.debug": false,
 }

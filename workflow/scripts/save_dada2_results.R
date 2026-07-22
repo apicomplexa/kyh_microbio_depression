@@ -66,3 +66,19 @@ write.table(
     sep='\t',
     quote=F
 )
+
+# Load and run reads loss plot function
+source('workflow/scripts/plots/reads_loss.R')
+
+# Load metadata
+metadata <- read.csv(snakemake@input$metadata, row.names = 'Run')
+
+# Create reads loss plot with saved outputs
+png(snakemake@output$reads_loss_plot, width = 1200, height = 700, res = 100)
+plot_reads_loss(
+    metadata,
+    depr_or_control,
+    reads_loss_file = snakemake@output$reads_loss_summary,
+    red_zone_file = snakemake@output$red_zone_samples
+)
+dev.off()
