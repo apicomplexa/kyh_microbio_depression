@@ -1,0 +1,14 @@
+# Auto-discovered by Snakemake 8+ when running from the repository root.
+# Note: the file must be named config.yaml for that discovery to work.
+software-deployment-method:
+  - conda
+cores: 27
+resources:
+  - mem_mb=94000
+rerun-incomplete: true
+set-threads:
+  LearnErrors: 12
+  AVSCalling: 24
+  ChimeraRemoval: 24
+  AssignTaxonomy: 24
+  FunctionalAnalysis: 24
