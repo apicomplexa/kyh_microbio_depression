@@ -82,6 +82,10 @@ Only `SraRunTable.csv` and `kyh_variables_description.csv` are committed. Check
 
 ## Analysis roadmap
 
+### Pipeline and reproducibility
+
+- [ ] Update autoinstalation script - add pixi, conda and quarto pdf setup, downloading references databases 
+
 ### Upstream & ASV inference
 - [x] Contaminant removal — done upstream, before NCBI upload (outside this pipeline)
 - [x] SRA download + primer trimming (cutadapt) + DADA2 quality filtering, with QC reports
