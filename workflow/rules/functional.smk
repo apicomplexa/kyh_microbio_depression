@@ -9,7 +9,7 @@ rule FunctionalAnalysis:
         outdir=lambda wc, output: subpath(output.path, ancestor=2),
         nsti=2
     # conda: "../envs/picrust2.yaml"
-    conda: "picrust2" # ready conda env because snakemake on my system refuse to download dependencies 
+    conda: "picrust2" # ready conda env build from source because conda on my system refuse to download dependencies for picrust2m. Thanks Kaspersky
     threads: 12
     shell:
         """
