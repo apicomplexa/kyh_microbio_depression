@@ -1,5 +1,5 @@
 ---
-title: "Alpha-beta pruning"
+title: "Alpha/Beta"
 author: "Alex Zobolev"
 date: today
 subtitle: "Preliminary results"
@@ -52,12 +52,11 @@ euc_dist_all <- as.dist(as.matrix(read.csv(
 taxa_table <- as.matrix(read.csv(params$i_taxa_table, sep = "\t", row.names=1))
 
 
-counts_phy <- otu_table(norm_counts_tab, taxa_are_rows = T)
 samples_info_phy <- sample_data(samples_info)
 taxa_table_phy <- tax_table(taxa_table)
 
-phy_norm <- phyloseq(counts_phy, samples_info_phy, taxa_table_phy)
-phy_raw <- phyloseq(counts_phy, samples_info_phy, taxa_table_phy)
+phy_norm <- phyloseq(otu_table(norm_counts_tab, taxa_are_rows = T), samples_info_phy, taxa_table_phy)
+phy_raw <- phyloseq(otu_table(counts_tab, taxa_are_rows = T), samples_info_phy, taxa_table_phy)
 
 meta <- data.frame(sample_data(phy_norm))
 predictors <- c('depr_or_control', 'batch', 'd_sex', 'd_age_hc')
@@ -101,7 +100,7 @@ betadisper(euc_dist_all, sample_data(phy_norm)$depr_or_control)$group.distances
 
 Depression and control samples have heterogeneous dispersions (spread of control samples twice bigger then depression set), which means I cannot truly trust permanova test on whole set. But amount of samples are the same for depression and control sets. So premanova still valid choice. 
 
-Associations between microbial taxa and depression of host were identified using permutational multivariate analysis of variance (PERMANOVA). The adonis2 function from the vegan package was employed, with 100 permutation tests performed with 1 000 permutations.
+Associations between microbial taxa and depression of host were identified using permutational multivariate analysis of variance (PERMANOVA). The adonis2 function from the vegan package was employed, with permutation tests performed with 1 000 permutations.
 
 ```{r}
 #| label: dc-premanova
@@ -116,7 +115,7 @@ Differences of dispersion are illustrated by different size of groups ellipses o
 
 ### Interim conclusions: Beta
 
-__Significant differences in gut microbiome composition were detected between patients with depression and the control group. These differences are associated with variations in the mean community structure and increased microbial community dispersion in depressed patients.__
+__Significant differences in gut microbiome composition were detected between patients with depression and the control group. These differences are associated with variations in the mean community structure and decreased microbial community dispersion in depressed patients.__
 
 ## Seasonal depression
 
@@ -136,7 +135,7 @@ anova(betadisper(euc_dist_all, paste(sample_data(phy_norm)$depr_or_control, samp
 #| tbl-cap: "Results of permutational multivariate analysis of variance. There is significant connection between microbial taxa and seasonal depression"
 form_string <- paste("euc_dist_all", "~", "season * ", rhs)
 f <- as.formula(form_string)
-adonis2(f, meta, permutations = 999, by = 'margin')
+adonis2(f, meta, permutations = 999)
 ```
 
 
@@ -155,5 +154,11 @@ The diversity composition of the bacterial microbiota was assessed using alpha d
 #| fig-cap: "Alpha-Diversity Analysis. Shannon, Simpson, and Chao's indices were used"
 phy_raw_no_zero_taxa <- prune_taxa(taxa_sums(phy_raw) > 0, phy_raw)
 alpha <- estimate_richness(phy_raw_no_zero_taxa, measures = c("Shannon", "Simpson", "Chao1"))
-plot_alpha_violins(cbind(sample_data(phy_raw), alpha), "depr_or_control",  c("Shannon", "Simpson", "Chao1"), 'results/figures/alpha.png')
+plot_alpha_violins(cbind(sample_data(phy_raw), alpha), "depr_or_control",  c("Shannon", "Simpson"), 'results/figures/alpha.png')
+```
+
+```{r}
+form_string <- paste("Shannon", "~", rhs)
+f <- as.formula(form_string)
+lm(f, data = cbind(sample_data(phy_raw), alpha))
 ```
