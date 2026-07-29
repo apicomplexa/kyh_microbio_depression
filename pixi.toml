@@ -56,3 +56,4 @@ r-ggside = { version = ">=0.4.1,<0.5", channel = "conda-forge" }
 r-dendextend = { version = ">=1.19.1,<2", channel = "conda-forge" }
 r-viridislite = { version = ">=0.4.3,<0.5", channel = "conda-forge" }
 quarto = ">=1.9.38,<2"
+r-ggpubr = ">=1.0.0,<2"

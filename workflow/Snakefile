@@ -18,7 +18,7 @@ rule all:
         counts='<results>/ASVs_counts.tsv',
         tax='<results>/ASVs_taxa.tsv',
         ab_report='<reports>/alpha_beta.pdf',
-        pathways='<results>/picrust2/KO_metagenome_out/pred_metagenome_unstrat.tsv.gz'
+        # pathways='<results>/picrust2/KO_metagenome_out/pred_metagenome_unstrat.tsv.gz'
 
 rule filter:
     input: expand("<samples_filter>/{sample}_R{n}.fastq.gz", sample=SRA_RUNS, n=[1, 2])
