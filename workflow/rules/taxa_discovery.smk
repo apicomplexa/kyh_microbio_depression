@@ -18,7 +18,7 @@ rule AsvNormalization:
         euclidean_dist = "<results>/ASVs_euclidean_{ps}_distance.tsv",
         ps_vst = "<temp>/ps_{ps}_vst.rds"
     script:
-        "../scripts/asv_normalization.R"
+        "../scripts/asv_vst_normalization.R"
 
 rule AlphaBetaDiversity:
     input:
