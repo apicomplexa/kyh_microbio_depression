@@ -57,3 +57,6 @@ r-dendextend = { version = ">=1.19.1,<2", channel = "conda-forge" }
 r-viridislite = { version = ">=0.4.3,<0.5", channel = "conda-forge" }
 quarto = ">=1.9.38,<2"
 r-ggpubr = ">=1.0.0,<2"
+bioconductor-microbiome = { version = ">=1.32.0,<2", channel = "bioconda" }
+bioconductor-dirichletmultinomial = { version = ">=1.52.0,<2", channel = "bioconda" }
+r-lattice = { version = ">=0.23_1,<0.24", channel = "conda-forge" }
