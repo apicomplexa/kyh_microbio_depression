@@ -1,5 +1,7 @@
 library(ggplot2)
 library(ggpubr)
+library(patchwork)
+
 plot_alpha_violins <- function(df, x, y, plot_file = NULL) {
     y_metrics <- if (length(y) == 1) y else y
 
