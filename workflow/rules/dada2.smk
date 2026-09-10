@@ -66,6 +66,7 @@ rule SaveResults:
         counts='<results>/ASVs_counts.tsv',
         tax='<results>/ASVs_taxa.tsv',
         reads_loss_plot='<figures>/reads_loss_plot.png',
-        red_zone_samples='<results>/red_zone_samples.txt'
+        red_zone_samples='<results>/red_zone_samples.txt',
+        ps_raw='<temp>/ps_raw.rds'
     script:
         '../scripts/save_dada2_results.R'

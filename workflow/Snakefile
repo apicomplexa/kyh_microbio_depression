@@ -8,7 +8,7 @@ include: "rules/common.smk"
 include: "rules/load_and_trim.smk"
 include: "rules/dada2.smk"
 include: "rules/functional.smk"
-include: "rules/diversity.smk"
+include: "rules/taxa_discovery.smk"
 # include: "rules/diff_abundance.smk"  # not wired up yet, see TODO in that file
 
 rule all:

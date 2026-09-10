@@ -1,5 +1,6 @@
 library(dplyr)
 library(dada2)
+library(phyloseq)
 
 # Summary of reads loss at each step of the dada2 pipeline
 reads_filter_reports <- do.call(rbind, lapply(
@@ -82,3 +83,16 @@ plot_reads_loss(
     red_zone_file = snakemake@output$red_zone_samples
 )
 dev.off()
+
+# Create ready to use phyloseq object and save it to .rds
+
+counts_tab <- counts_tab
+samples_info <- metadata
+taxa_table <- taxa
+
+samples_info_phy <- sample_data(samples_info)
+taxa_table_phy <- tax_table(taxa_table)
+
+ps <- phyloseq(otu_table(counts_tab, taxa_are_rows = T), samples_info_phy, taxa_table_phy)
+
+saveRDS(ps, snakemake@output$ps_raw)
