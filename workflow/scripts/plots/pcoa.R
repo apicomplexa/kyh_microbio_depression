@@ -1,5 +1,6 @@
 library(rlang)
 library(ggside)
+library(vegan)
 
 # -- private helpers -------------------------------------------------------
 
