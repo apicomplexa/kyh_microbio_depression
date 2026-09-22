@@ -147,7 +147,7 @@ adonis2(f, meta, permutations = 999)
 plot_rarecurve(phy_raw, depr_or_control)
 ```
 
-The diversity composition of the bacterial microbiota was assessed using alpha diversity (αdiversity), specifically the Shannon, Simpson and Chao1 indexes at ASV levels
+The diversity composition of the bacterial microbiota was assessed using alpha diversity (α-diversity), specifically the Shannon and Simpson indexes at ASV levels. Function `ggviolin` form package `ggpubr` was used to draw Shannon and Simpson indexes distributions across samples. Function `stat_compare_means` with method `t.test` form the same package was used to compare these distributions.
 
 ```{r}
 #| label: alpha-metrics
@@ -157,8 +157,4 @@ alpha <- estimate_richness(phy_raw_no_zero_taxa, measures = c("Shannon", "Simpso
 plot_alpha_violins(cbind(sample_data(phy_raw), alpha), "depr_or_control",  c("Shannon", "Simpson"), 'results/figures/alpha.png')
 ```
 
-```{r}
-form_string <- paste("Shannon", "~", rhs)
-f <- as.formula(form_string)
-lm(f, data = cbind(sample_data(phy_raw), alpha))
-```
+As we can see, there are no significant difference of alpha indexes distributions (p-value > 0.5 for both indexes) 

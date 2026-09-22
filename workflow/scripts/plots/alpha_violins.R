@@ -18,7 +18,7 @@ plot_alpha_violins <- function(df, x, y, plot_file = NULL) {
             add = "boxplot"
         ) +
             stat_compare_means(
-                method = "t.test",
+                method = "wilcox.test",
                 comparisons = comp,
                 label.y.npc = 0.95
             ) +

@@ -34,4 +34,7 @@
     "r.useRenvLibPath": false,
     "r.lsp.use_stdio": true,
     "r.lsp.debug": false,
+    "cSpell.words": [
+        "geterogeneous"
+    ],
 }

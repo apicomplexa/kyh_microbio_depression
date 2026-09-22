@@ -100,16 +100,15 @@ Only `SraRunTable.csv` and `kyh_variables_description.csv` are committed. Check
 - [x] PCoA ordination + sample dendrogram
 - [x] PERMANOVA (adonis2) with covariates (batch, sex, age)
 - [x] Switch adonis2 to by="margin" (or reorder terms) so the depression effect is covariate-adjusted
-- [ ] Fix mislabeled "beta dispersion" wording (PERMANOVA tests location, not dispersion)
 - [x] betadisper / PERMDISP dispersion test (required to interpret PERMANOVA correctly)
-- [ ] Resolve flagged PCoA outliers (biological vs technical)
+- [x] Resolve flagged PCoA outliers (biological vs technical)
 
-### Diversity — alpha  (NOT STARTED)
+### Diversity — alpha
 - [x] Feed raw ASVs_counts.tsv into the report (VST is invalid for richness)
-- [ ] Alpha metrics: Observed, Shannon (+ Faith's PD if a tree is built)
-- [ ] Group tests, covariate-adjusted (case/control)
+- [x] Alpha metrics: Observed, Shannon (+ Faith's PD if a tree is built)
+- [x] Group tests, covariate-adjusted (case/control)
 
-- [ ] Harden alpha/beta report to publish-ready
+- [x] Harden alpha/beta report to publish-ready
 
 ### Differential abundance — ASVs
 - [ ] Wire up diff_abundance.smk (currently a stub)
@@ -129,7 +128,11 @@ Only `SraRunTable.csv` and `kyh_variables_description.csv` are committed. Check
 
 ### Community structure
 - [ ] DMM clustering: model selection (Laplace / BIC), assign community types
-- [ ] Test community type ~ depression status + covariates (case/control)
+  - [x] Taxonomy level
+  - [ ] Functional level
+- [x] Test community type ~ depression status + covariates (case/control)
+  - [x] Taxonomy level
+  - [ ] Functional level
 - [ ] Report, publish-ready
 
 ### Interaction networks

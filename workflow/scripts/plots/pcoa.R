@@ -109,7 +109,7 @@ plot_pcoa <- function(
         ) +
         theme_bw() +
         theme_ggside_void() +
-        theme(ggside.panel.scale = 0.2)
+        theme(ggside.panel.scale = 0.2, legend.position = "bottom")
 
     print(p)
 

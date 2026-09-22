@@ -1,0 +1,262 @@
+---
+title: "Taxonomy discovery"
+author: "Alex Zobolev"
+date: today
+subtitle: "Overview of Taxonomy. Alpha and Beta diversities"
+abstract: ""
+execute:
+  echo: false
+  warning: false
+  message: false
+  eval: true
+params:
+    ps_raw: "data/temp/ps_raw.rds"
+    ps_core: "data/temp/ps_core.rds"
+    euc_dist_core: "results/ASVs_euclidean_core_distance.tsv"
+    rand_seed: 08092003
+---
+
+```{r}
+#| label: load-necessaries
+#| output: false
+
+library(knitr)
+
+library(phyloseq)
+library(dplyr)
+library(vegan)
+library(microbiome)
+library(DirichletMultinomial)
+
+source("workflow/scripts/asv_vst_normalization.R")
+source('workflow/scripts/fit_dmm.R')
+
+source("workflow/scripts/plots/dendrogram.R")
+source("workflow/scripts/plots/pcoa.R")
+source("workflow/scripts/plots/alpha_violins.R")
+
+ps_raw <- readRDS(params$ps_raw)
+ps_core <- readRDS(params$ps_core)
+
+vst_res <- vst_normalization(ps_core)
+ps_core_vst <- vst_res$ps_vst
+euc_dist_core <- vst_res$euclidean_dist
+
+meta <- data.frame(sample_data(ps_core))
+
+predictors <- c(
+    'depr_or_control', 
+    # 'batch', 
+    'd_sex', 
+    'd_age_hc'
+)
+predictors <- predictors[meta[predictors] |> sapply(function(x) length(unique(x))) > 1]
+rhs <- paste(predictors, collapse = " + ")
+
+dc_labels <- c(
+    depr = "Depression",
+    control = "Control"
+)
+season_labels <- c(
+    cold = 'Cold season',
+    warm = 'Warm season'
+)
+```
+
+```{r}
+#| label: agg-to-genus
+#| output: false
+
+ps_core_genus <- tax_glom(ps_core, taxrank = 'genus')
+vst_core_genus <- vst_normalization(ps_core_genus)
+ps_core_genus_vst <- vst_core_genus$ps_vst
+euc_dist_core_genus <- vst_core_genus$euclidean_dist
+```
+
+
+# Taxonomy overview
+
+Function `core` from `microbiome` R package was used to filter low-abundance ASVs with prevalence threshold of 0.05 and detection threshold of 1. `{r} ntaxa(ps_core)` unique ASVs and `{r} ntaxa(ps_core_genus)` genus remained after filtering. None of these ASVs were singleton. 
+
+
+## Diversity
+
+Diversity of bacterial microbiota of samples was evaluated using $\alpha$-diversity, especially with Shannon, Simpson and Chao1 indexes and $\beta$-diversity, via Principal coordinates analysis.
+
+### $\beta$-diversity
+
+$\beta$-diversity was calculated by Principal coordinates analysis (PCoA) using Euclidean distances with Variance Stabilizing transformed (VST) counts on ASVs and Genus levels. Function `varianceStabilizingTransformation` from `DESeq2` R package was used to normalize ASVs counts and produce inter-sample distances. Function `wcmdscale` from `vegan` R package was used directly for PCoA. Function `adonis2` from `vegan` R package was used to perform permanova test to assess statistical significancy of difference between depression and control gropes with 1 000 permutations with `margin` mode. The same analysis was performed of 4 groups (Depression - Warm season, Control - Warm season, Depression - Cold season, Control - Warm season) to test hypothesis about seasonal depression.
+
+```{r}
+#| label: pcoa-dc
+#| fig-width: 6
+#| fig-height: 6
+#| layout-ncol: 2
+#| layout-nrow: 2
+#| fig-cap: "Principal coordinates analysis (PCoA) performed on ASV and genus level based on Euclidean distances between samples. Each dot represents analyzed sample, ellipses shows 1-SD interval of two-dimensional ordination of each gropes, bar plots shows components of this ordination"
+#| fig-subcap: 
+#|  - "PCoA of two phenotype clusters: patients with depression samples (41 sample) and control set (41 sample) on ASV level"
+#|  - "PCoA of these two custers only on genus level"
+#|  - "Same analyzes only of 4 clusters: depression status (case or control) and season of sample receiving"
+#|  - "Same analyzes of 4 clusters on genus level"
+set.seed(params$rand_seed)
+
+plot_pcoa(
+    ps_core_vst, 
+    euc_dist_core, 
+    unname(dc_labels[depr_or_control]),
+    legend_title="Depression vs. Control"
+)
+
+plot_pcoa(
+    ps_core_genus_vst, 
+    euc_dist_core_genus, 
+    unname(dc_labels[depr_or_control]),
+    legend_title="Depression vs. Control"
+)
+
+plot_pcoa(
+    ps_core_vst, 
+    euc_dist_core, 
+    paste(unname(dc_labels[depr_or_control]), unname(season_labels[season]), sep=", "), 
+    legend_title="Depression vs. Season"
+)
+
+plot_pcoa(
+    ps_core_genus_vst,
+    euc_dist_core_genus,
+    paste(unname(dc_labels[depr_or_control]), unname(season_labels[season]), sep=", "), 
+    legend_title="Depression vs. Season"
+)
+```
+
+```{r}
+#| label: beta-permanova
+#| output: false
+set.seed(params$rand_seed)
+
+# ASV level
+
+form_string <- paste("euc_dist_core", "~", rhs)
+f <- as.formula(form_string)
+dc_pmnv_asv <- adonis2(f, meta, by = 'margin', permutations = 999)
+
+form_string <- paste("euc_dist_core", "~", "season * ", rhs)
+f <- as.formula(form_string)
+sd_pmnv_asv <- adonis2(f, meta, permutations = 999, by = 'margin')
+
+# Genus level
+
+form_string <- paste("euc_dist_core_genus", "~", rhs)
+f <- as.formula(form_string)
+dc_pmnv_genus <- adonis2(f, meta, by = 'margin', permutations = 999)
+
+form_string <- paste("euc_dist_core_genus", "~", "season * ", rhs)
+f <- as.formula(form_string)
+sd_pmnv_genus <- adonis2(f, meta, permutations = 999, by = 'margin')
+
+# Results
+dc_asv_r2 <- round(dc_pmnv_asv['depr_or_control','R2'], digits = 3)
+dc_asv_p <- dc_pmnv_asv['depr_or_control','Pr(>F)']
+
+dc_genus_r2 <- round(dc_pmnv_genus['depr_or_control','R2'], digits = 3)
+dc_genus_p <- dc_pmnv_genus['depr_or_control','Pr(>F)']
+
+sd_asv_r2 <- round(sd_pmnv_asv['season:depr_or_control','R2'], digits = 3)
+sd_asv_p <- sd_pmnv_asv['season:depr_or_control','Pr(>F)']
+
+sd_genus_r2 <- round(sd_pmnv_genus['season:depr_or_control','R2'], digits = 3)
+sd_genus_p <- sd_pmnv_genus['season:depr_or_control','Pr(>F)']
+
+```
+
+
+PEMANOVA results shows that phenotype group (depression or control set) significantly influence the difference of $\beta$-diversity on ASV level ( $R^{2} =$ `{r} dc_asv_r2`, $p-value =$ `{r} dc_asv_p`). Meanwhile this influence on genus level is insignificant. ( $R^{2} =$ `{r} dc_genus_r2`, $p-value =$ `{r} dc_genus_p`) 
+
+Test shows no significant difference of $\beta$-diversity between seasonal depression groups on ASV and Genus levels (ASV level: $R^{2} =$ `{r} sd_asv_r2`, $p-value =$ `{r} sd_asv_p`, genus level:  $R^{2} =$ `{r} sd_genus_r2`, $p-value =$ `{r} sd_genus_p`)
+
+Phylogenetic tree was calculated using matrix of Euclidean diastasis.
+
+```{r}
+#| label: dendro
+#| fig-width: 8
+#| fig-height: 8
+#| fig-cap: "Bar plot of genuses relative abundance with hierarchical clustering using Euclidean distances variance stabilizing transformed (VST) counts matrix. Each vertical bar on x-axis represents analyzed sample, meanwhile y-axis shows relative abundance of 30 most widely represented in this sample bacterial genera"
+set.seed(params$rand_seed)
+
+plot_dendrogram(
+    euc_dist_core, ps_core_vst,
+    'Depression or Control' = depr_or_control, Season = season, Sex = d_sex,
+    taxa_rank = "genus", n_taxa = 30
+)
+```
+
+#### Note about PERMANOVA
+
+PERMANOVA could overestimate significance of difference between groups if groups are heterogeneous. `betadisper` function from `vegan` R package could be used to evaluate beta-dispersion for each group. `anova` function from `vegan` package calculate is thees dispersion are the same. 
+
+```{r}
+#| label: betadisper
+#| tbl-cap: 'Table of p-values represents significance of difference of beta-diversity between phenotype groups by Anova results'
+#| classes: plain
+
+dc_beta <- betadisper(euc_dist_core, sample_data(ps_core_vst)$depr_or_control)
+sd_beta <- betadisper(euc_dist_core, paste(sample_data(ps_core)$depr_or_control, sample_data(ps_core)$season, sep="_"))
+dc_beta_genus <- betadisper(euc_dist_core_genus, sample_data(ps_core_genus_vst)$depr_or_control)
+sd_beta_genus <- betadisper(euc_dist_core_genus, paste(sample_data(ps_core_genus_vst)$depr_or_control, sample_data(ps_core)$season, sep="_"))
+
+kable(beta_p_df <- data.frame(
+    'Groups' = c(
+        'Depression vs. control. ASVs',
+        'Depression vs. control. Genus',
+        'Depression vs. season. ASVs',
+        'Depression vs. season. Genus'
+        ),
+    'p-value' = sapply(
+        list(dc_beta, sd_beta, dc_beta_genus, sd_beta_genus),
+        function(bdr) round(anova(bdr, by='margin')['Groups', 'Pr(>F)'], digits = 3)
+    )
+))
+```
+
+Anova Depression vs. control sets beta-diversity dispersion shows p-value less then 0.001 - sets dispersions are different, which means that PERMANOVA couldn't be used to analyze beta-diversity. Meanwhile @andersonPERMANOVAANOSIMMantel2013 says that PERMANOVA could be user to analyze heterogenious dispersion sets if groups size are comparable.
+
+```{r}
+#| label: sets-size
+#| tbl-cap: "Size of analyzed set are equal"
+#| layout-ncol: 2
+
+dc_freq <- unname(dc_labels[meta$depr_or_control]) |> table() |> data.frame()
+season_freq <- unname(season_labels[meta$season])  |> table() |> data.frame()
+sd_freq <- paste(unname(dc_labels[meta$depr_or_control]), unname(season_labels[meta$season]), sep=", ") |> table() |> data.frame()
+
+all_freq <- dplyr::bind_rows(dc_freq, season_freq, sd_freq)
+colnames(all_freq) <- c('Set', 'Abs. amount of samples')
+
+kable(all_freq)
+```
+
+### $\alpha$-diversity
+
+Diversity of samples were estimated with $\alpha$-diversity metrics using `estimate_richness` function from `phyloseq` R package to calculate metrics and `stat_compare_means` with method `wilcox.test` from R package `ggpubr`.
+
+```{r}
+#| label: alpha-violins
+ps_core_no_zero_taxa <- prune_taxa(taxa_sums(ps_core) > 0, ps_core)
+alpha <- estimate_richness(ps_core_no_zero_taxa, measures = c("Shannon", "Simpson", "Chao1"))
+plot_alpha_violins(cbind(sample_data(ps_core), alpha), "depr_or_control",  c("Shannon", "Simpson", "Chao1"))
+
+alpha <- estimate_richness(ps_core_genus, measures = c("Shannon", "Simpson", "Chao1"))
+plot_alpha_violins(cbind(sample_data(ps_core_genus), alpha), 'depr_or_control', c("Shannon", "Simpson", "Chao1"))
+```
+
+Shannon anď Simpson metrics shows no significant difference of $\alpha$-diversity between Depression and Control sets is ASV and Genus levels. Meanwhile Chao1 significantly different in both levels. 
+
+
+# Session info
+
+```{r}
+#| label: session-info
+
+sessionInfo()
+```
